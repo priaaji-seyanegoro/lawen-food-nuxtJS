@@ -34,7 +34,7 @@
     </div>
 
     <!-- list product  -->
-    <div class="row mb-4">
+    <div class="row mb-4" v-if="isLoading">
       <div
         class="col-md-4 mt-4 d-flex justify-content-center"
         v-for="product in foods"
@@ -42,6 +42,11 @@
       >
         <ProductCard :product="product" />
       </div>
+    </div>
+
+    <div class="text-center mt-3" v-else>
+      <b-spinner label="Spinning" />
+      <h1>Loading</h1>
     </div>
   </div>
 </template>
@@ -54,6 +59,7 @@ export default {
     return {
       products: [],
       queryParams: "",
+      isLoading: false,
     };
   },
   computed: {
@@ -76,11 +82,12 @@ export default {
     },
   },
   //fire when page rendered
-  mounted() {
+  created() {
     axios
       .get(`${baseUrl}/products`)
       .then((result) => {
         this.$store.commit("setFoods", result.data);
+        this.isLoading = true;
         // console.log(this.$store.state.bestFood);
         // this.setProduct(this.$store.state.foods);
       })
